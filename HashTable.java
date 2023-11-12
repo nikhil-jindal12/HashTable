@@ -3,7 +3,6 @@
  * @author Nikhil Jindal
  */
 public class HashTable {
-    // order to insert: [2,12,22,32,42,52,62,72,82,92,14,17,18,3,8,1,18,11,13,20]
     
     // creates a table full of Entry's that will be used for the hash table
     private Entry[] table;
@@ -89,6 +88,33 @@ public class HashTable {
     }
 
     /**
+     * Finds an open position in the hash table (using linear search)
+     * @param key  the key to search for
+     * @return  the index value of the open position in the hash table
+     */
+    private int linearProbe(int key) {
+        // value of the first hash
+        int i = h1(key);
+
+        // number of iterations
+        int k = 1;
+
+        // keep probing until the entry is empty or removed
+        while (table[i] != null && table[i].removed == false) {
+            i = (i + 1) % tableSize;
+            k++;
+
+            // break out if the number of iterations is greater than the table size
+            if (k > tableSize) {
+                return -1;
+            }
+        }
+
+        // return the open index value
+        return i;
+    }
+
+    /**
      * Returns the location of a given key in the hash table
      * Returns -1 if the key is not found
      * @param key  the key to search for
@@ -121,6 +147,35 @@ public class HashTable {
     }
 
     /**
+     * Returns the location of a given key in the hash table (using linear search)
+     * Returns -1 if the key is not found
+     * @param key  the key to search for
+     * @return  the location of the key in the hash table
+     */
+    private int linearFindKey(int key) {
+        // value of the first hash
+        int i = h1(key);
+
+        // number of iterations
+        int iterations = 0;
+
+        // keep probing while the entry is not empty
+        while (table[i] != null) {
+            // return if key is found, otherwise continue
+            if (table[i].removed == false && table[i].key == key) {
+                i = (i + 1) % tableSize;
+                iterations++;
+                if (iterations >= tableSize) {
+                    return -1;
+                }
+            }
+        }
+
+        // return -1 if key is not found
+        return -1;
+    }
+
+    /**
      * Searches for the entry in the hash table and returns the key
      * Returns -1 if the key is not found
      * @param key  the key to search for
@@ -129,6 +184,25 @@ public class HashTable {
     public int search(int key) {
         // find the location of the key
         int i = findKey(key);
+
+        // return the key if it was found
+        if (i != -1) {
+            return key;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Searches for the entry in the hash table and returns the key (using linear search)
+     * Returns -1 if the key is not found
+     * @param key  the key to search for
+     * @return  the key of the entry in the hash table if it is found
+     * @return  -1 if the key is not found
+     */
+    public int linearSearch(int key) {
+        // fint the location of the key
+        int i = linearFindKey(key);
 
         // return the key if it was found
         if (i != -1) {
@@ -155,6 +229,22 @@ public class HashTable {
     }
 
     /**
+     * Removes an entry from the hash table given its key (using linear search)
+     * @param key  the key of the entry to remove
+     */
+    public void linearRemove(int key) {
+        // find the location of the key
+        int i = linearFindKey(key);
+
+        // remove the entry if it was found
+        if (i == -1) {
+            return;
+        } else {
+            table[i].removed = true;
+        }
+    }
+
+    /**
      * Inserts a new entry into the hash table
      * @param key  the key of the entry to insert
      */
@@ -170,5 +260,81 @@ public class HashTable {
         }
     }
 
+    /**
+     * Inserts a new entry into the hash table (using linear search)
+     * @param key  the key of the entry to insert
+     */
+    public void linearInsert(int key) {
+        // find an open position in the hash table
+        int i = linearProbe(key);
+
+        // insert the entry if an open position was found
+        if (i == -1) {
+            throw new RuntimeException("Table is full");
+        } else {
+            table[i] = new Entry(key);
+        }
+    }
+
+    /**
+     * Prints out a representation of the hash table
+     */
+    public void printTable() {
+        System.out.print("[");
+        for (int i = 0; i < tableSize; i++) {
+            if (table[i] != null) {
+                System.out.print(table[i].key);
+                if (i < tableSize - 1) {
+                    System.out.print(", ");
+                }
+            } else {
+                System.out.print(" ,");
+            }
+        }
+        System.out.print("]\n");
+    }
+
+    public static void main(String[] args) {
+        
+        /**********
+         * PART 1 *
+         **********/
+        System.out.println("Part 1:\nInserting in the order [14,17,18,3,8,1,18,11,13,20] using linear probing");
+        int[] p1array = {14,17,18,3,8,1,18,11,13,20};
+        HashTable p1hashtable = new HashTable(10);
+        for (int i = 0; i < p1hashtable.tableSize; i++) {
+            p1hashtable.linearInsert(p1array[i]);
+            System.out.printf("Step %d: ", i + 1);
+            p1hashtable.printTable();
+        }
+        System.out.println();
+        System.out.println();
+
+        /***********
+         * PART 2a *
+         ***********/
+        System.out.println("Part 2a:\nInserting in the order [2,12,22,32,42,52,62,72,82,92] using linear probing");
+        int[] p2array = {2,12,22,32,42,52,62,72,82,92};
+        HashTable p2hashtable = new HashTable(10);
+        for (int i = 0; i < p2hashtable.tableSize; i++) {
+            p2hashtable.linearInsert(p2array[i]);
+            System.out.printf("Step %d: ", i + 1);
+            p2hashtable.printTable();
+        }
+        System.out.println();
+        System.out.println();
+
+        /***********
+         * PART 2b *
+         ***********/ 
+        System.out.println("Part 2b:\nInserting in the order [2,12,22,32,42,52,62,72,82,92,14,17,18,3,8,1,18,11,13,20] using double hashing");
+        int[] array = {2,12,22,32,42,52,62,72,82,92,14,17,18,3,8,1,18,11,13,20};
+        HashTable table = new HashTable(20);
+        for (int i = 0; i < table.tableSize; i++) {
+            table.insert(array[i]);
+            System.out.printf("Step %d: ", i + 1);
+            table.printTable();
+        }
+    }
     
 }
