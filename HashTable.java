@@ -58,7 +58,7 @@ public class HashTable {
     }
 
     /**
-     * Finds an open position in the hash table
+     * Finds an open position in the hash table (using double hashing)
      * @param key  the key to search for
      * @return  the index value of the open position in the hash table
      */
@@ -115,7 +115,7 @@ public class HashTable {
     }
 
     /**
-     * Returns the location of a given key in the hash table
+     * Returns the location of a given key in the hash table (using double hashing)
      * Returns -1 if the key is not found
      * @param key  the key to search for
      * @return  the location of the key in the hash table
@@ -176,12 +176,12 @@ public class HashTable {
     }
 
     /**
-     * Searches for the entry in the hash table and returns the key
+     * Searches for the entry in the hash table and returns the key (using double hashing)
      * Returns -1 if the key is not found
      * @param key  the key to search for
      * @return  the key of the entry in the hash table if it is found
      */
-    public int search(int key) {
+    private int search(int key) {
         // find the location of the key
         int i = findKey(key);
 
@@ -200,7 +200,7 @@ public class HashTable {
      * @return  the key of the entry in the hash table if it is found
      * @return  -1 if the key is not found
      */
-    public int linearSearch(int key) {
+    private int linearSearch(int key) {
         // fint the location of the key
         int i = linearFindKey(key);
 
@@ -213,10 +213,10 @@ public class HashTable {
     }
 
     /**
-     * Removes an entry from the hash table given its key
+     * Removes an entry from the hash table given its key (using double hashing)
      * @param key  the key of the entry to remove
      */
-    public void remove(int key) {
+    private void remove(int key) {
         // find the location of the key
         int i = findKey(key);
 
@@ -232,7 +232,7 @@ public class HashTable {
      * Removes an entry from the hash table given its key (using linear search)
      * @param key  the key of the entry to remove
      */
-    public void linearRemove(int key) {
+    private void linearRemove(int key) {
         // find the location of the key
         int i = linearFindKey(key);
 
@@ -245,10 +245,10 @@ public class HashTable {
     }
 
     /**
-     * Inserts a new entry into the hash table
+     * Inserts a new entry into the hash table (using  double hashing)
      * @param key  the key of the entry to insert
      */
-    public void insert(int key) {
+    private void insert(int key) {
         // find an open position in the hash table
         int i = probe(key);
 
@@ -264,7 +264,7 @@ public class HashTable {
      * Inserts a new entry into the hash table (using linear search)
      * @param key  the key of the entry to insert
      */
-    public void linearInsert(int key) {
+    private void linearInsert(int key) {
         // find an open position in the hash table
         int i = linearProbe(key);
 
@@ -279,7 +279,7 @@ public class HashTable {
     /**
      * Prints out a representation of the hash table
      */
-    public void printTable() {
+    private void printTable() {
         System.out.print("[");
         for (int i = 0; i < tableSize; i++) {
             if (table[i] != null) {
